@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - MeuMelhorAmigo</title>
+</head>
+<body>
+<h1>MeuMelhorAmigo</h1>
+<h2>Cadastro</h2>
+
+<form method="post" action="/cadastro">
+    <label>Nome:</label>
+    <input type="text" name="nome" required/>
+
+    <label>Email:</label>
+    <input type="email" name="email" required/>
+
+    <label>Senha:</label>
+    <input type="password" name="senha" required/>
+
+    <button type="submit">Cadastrar</button>
+</form>
+
+<a href="/login">Já tem conta? Faça login</a>
+</body>
+</html>
