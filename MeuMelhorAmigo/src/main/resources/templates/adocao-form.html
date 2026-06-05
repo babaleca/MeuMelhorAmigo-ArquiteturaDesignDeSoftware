@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitar Adoção - MeuMelhorAmigo</title>
+</head>
+<body>
+<h1>MeuMelhorAmigo</h1>
+<h2>Solicitar Adoção</h2>
+
+<div th:if="${erro}" style="color: red;">
+    <p th:text="${erro}"></p>
+</div>
+
+<div th:if="${animal}">
+    <h3>Animal: <span th:text="${animal.especie}"></span> - <span th:text="${animal.raca}"></span></h3>
+    <p>Local: <span th:text="${animal.local}"></span></p>
+</div>
+
+<form th:action="@{/adocao/solicitar/{id}(id=${animal.id})}" method="post">
+    <label>Por que você quer adotar este animal?</label><br/>
+    <textarea name="motivacao" rows="5" cols="50" required
+              placeholder="Conte sobre você, sua casa, sua rotina..."></textarea>
+    <br/>
+    <button type="submit">Enviar Solicitação</button>
+</form>
+
+<br/>
+<a th:href="@{/animais/{id}(id=${animal.id})}">← Voltar para o animal</a>
+</body>
+</html>

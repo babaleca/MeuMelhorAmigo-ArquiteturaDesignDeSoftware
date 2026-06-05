@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Solicitações - MeuMelhorAmigo</title>
+</head>
+<body>
+<h1>MeuMelhorAmigo</h1>
+
+<div th:if="${sucesso}" style="color: green;">
+    <p th:text="${sucesso}"></p>
+</div>
+
+<h2>Solicitações recebidas nos meus animais</h2>
+<div th:if="${#lists.isEmpty(recebidas)}">
+    <p>Nenhuma solicitação recebida ainda.</p>
+</div>
+<table th:unless="${#lists.isEmpty(recebidas)}" border="1">
+    <tr>
+        <th>Animal</th>
+        <th>Adotante</th>
+        <th>Motivação</th>
+        <th>Data</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    <tr th:each="s : ${recebidas}">
+        <td th:text="${s.animal.especie + ' - ' + s.animal.raca}"></td>
+        <td th:text="${s.adotante.nome}"></td>
+        <td th:text="${s.motivacao}"></td>
+        <td th:text="${s.dataSolicitacao}"></td>
+        <td th:text="${s.status}"></td>
+        <td>
+            <form th:if="${s.status.name() == 'PENDENTE'}"
+                  th:action="@{/adocao/aprovar/{id}(id=${s.id})}" method="post" style="display:inline">
+                <button type="submit">Aprovar</button>
+            </form>
+            <form th:if="${s.status.name() == 'PENDENTE'}"
+                  th:action="@{/adocao/recusar/{id}(id=${s.id})}" method="post" style="display:inline">
+                <button type="submit">Recusar</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h2>Minhas candidaturas</h2>
+<div th:if="${#lists.isEmpty(enviadas)}">
+    <p>Você ainda não se candidatou a nenhum animal.</p>
+</div>
+<table th:unless="${#lists.isEmpty(enviadas)}" border="1">
+    <tr>
+        <th>Animal</th>
+        <th>Data</th>
+        <th>Status</th>
+    </tr>
+    <tr th:each="s : ${enviadas}">
+        <td th:text="${s.animal.especie + ' - ' + s.animal.raca}"></td>
+        <td th:text="${s.dataSolicitacao}"></td>
+        <td th:text="${s.status}"></td>
+    </tr>
+</table>
+
+<br/>
+<a href="/animais">← Voltar para animais</a>
+</body>
+</html>
