@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notificações - MeuMelhorAmigo</title>
+</head>
+<body>
+<h1>MeuMelhorAmigo</h1>
+<h2>Minhas Notificações</h2>
+
+<div th:if="${#lists.isEmpty(notificacoes)}">
+    <p>Você não tem notificações.</p>
+</div>
+
+<table th:unless="${#lists.isEmpty(notificacoes)}" border="1">
+    <tr>
+        <th>Mensagem</th>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Lida</th>
+        <th>Ação</th>
+    </tr>
+    <tr th:each="n : ${notificacoes}">
+        <td th:text="${n.mensagem}"></td>
+        <td th:text="${n.tipo}"></td>
+        <td th:text="${n.dataEnvio}"></td>
+        <td th:text="${n.lida ? 'Sim' : 'Não'}"></td>
+        <td>
+            <form th:if="${!n.lida}"
+                  th:action="@{/notificacoes/{id}/lida(id=${n.id})}" method="post">
+                <button type="submit">Marcar como lida</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<br/>
+<a href="/animais">← Voltar para animais</a>
+</body>
+</html>
