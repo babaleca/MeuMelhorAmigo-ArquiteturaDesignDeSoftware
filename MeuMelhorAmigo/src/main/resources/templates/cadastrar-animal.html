@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar animal - MeuMelhorAmigo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; color: #222; }
+        h1 { color: #2c6e49; }
+        form { max-width: 560px; }
+        label { display: block; margin-top: 12px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { margin-top: 16px; padding: 10px 18px; background: #2c6e49; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+        fieldset { margin-top: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<a th:href="@{/animais}">&larr; Voltar para a lista</a>
+<h1>Cadastrar animal</h1>
+
+<form method="post" th:action="@{/animais/cadastrar}" enctype="multipart/form-data">
+
+    <label>Tipo de cadastro</label>
+    <select name="tipo" id="tipo" onchange="alternar()">
+        <option value="encontrado">Animal encontrado / resgatado</option>
+        <option value="perdido">Animal perdido</option>
+    </select>
+
+    <label>Espécie *</label>
+    <input type="text" name="especie" placeholder="cão, gato, outro" required/>
+
+    <label>Raça</label>
+    <input type="text" name="raca"/>
+
+    <label>Cor</label>
+    <input type="text" name="cor"/>
+
+    <label>Tamanho</label>
+    <select name="tamanho">
+        <option value="">--</option>
+        <option value="Pequeno">Pequeno</option>
+        <option value="Médio">Médio</option>
+        <option value="Grande">Grande</option>
+    </select>
+
+    <label>Sexo</label>
+    <select name="sexo">
+        <option value="">--</option>
+        <option value="Macho">Macho</option>
+        <option value="Fêmea">Fêmea</option>
+    </select>
+
+    <label>Local</label>
+    <input type="text" name="local" placeholder="cidade / bairro"/>
+
+    <label>Descrição</label>
+    <textarea name="descricao" rows="3"></textarea>
+
+    <label>Foto (máx. 5MB)</label>
+    <input type="file" name="foto" accept="image/*"/>
+
+    <fieldset id="campos-encontrado">
+        <legend>Dados do encontro</legend>
+        <label>Data do encontro</label>
+        <input type="date" name="dataEncontro"/>
+        <label>Local do encontro</label>
+        <input type="text" name="localEncontro"/>
+        <label>Condição de saúde</label>
+        <input type="text" name="condicaoSaude"/>
+    </fieldset>
+
+    <fieldset id="campos-perdido" style="display:none">
+        <legend>Dados do desaparecimento</legend>
+        <label>Nome do animal</label>
+        <input type="text" name="nome"/>
+        <label>Data do desaparecimento</label>
+        <input type="date" name="dataDesaparecimento"/>
+        <label>Características marcantes</label>
+        <textarea name="caracteristicas" rows="2" placeholder="cicatrizes, coleira, microchip..."></textarea>
+        <label>Recompensa (opcional)</label>
+        <input type="text" name="recompensa"/>
+    </fieldset>
+
+    <button type="submit">Cadastrar</button>
+</form>
+
+<script>
+    function alternar() {
+        var tipo = document.getElementById('tipo').value;
+        document.getElementById('campos-encontrado').style.display = (tipo === 'encontrado') ? 'block' : 'none';
+        document.getElementById('campos-perdido').style.display = (tipo === 'perdido') ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>
