@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin - MeuMelhorAmigo</title>
+</head>
+<body>
+<h1>MeuMelhorAmigo — Painel Administrativo</h1>
+
+<div th:if="${sucesso}" style="color: green;">
+    <p th:text="${sucesso}"></p>
+</div>
+
+<h2>Animais cadastrados</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Espécie</th>
+        <th>Raça</th>
+        <th>Status</th>
+        <th>Responsável</th>
+        <th>Data</th>
+    </tr>
+    <tr th:each="animal : ${animais}">
+        <td th:text="${animal.id}"></td>
+        <td th:text="${animal.especie}"></td>
+        <td th:text="${animal.raca}"></td>
+        <td th:text="${animal.status}"></td>
+        <td th:text="${animal.responsavel != null ? animal.responsavel.nome : '-'}"></td>
+        <td th:text="${animal.dataRegistro}"></td>
+    </tr>
+</table>
+
+<h2>Usuários cadastrados</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Ativo</th>
+        <th>Ação</th>
+    </tr>
+    <tr th:each="usuario : ${usuarios}">
+        <td th:text="${usuario.id}"></td>
+        <td th:text="${usuario.nome}"></td>
+        <td th:text="${usuario.email}"></td>
+        <td th:text="${usuario.role}"></td>
+        <td th:text="${usuario.ativo ? 'Sim' : 'Não'}"></td>
+        <td>
+            <form th:action="@{/admin/usuarios/{id}/toggle-ativo(id=${usuario.id})}" method="post">
+                <button type="submit"
+                        th:text="${usuario.ativo ? 'Desativar' : 'Ativar'}"></button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<br/>
+<a href="/animais">← Voltar para animais</a>
+<a href="/logout">Sair</a>
+</body>
+</html>
