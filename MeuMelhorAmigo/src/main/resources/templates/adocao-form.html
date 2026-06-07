@@ -18,6 +18,7 @@
 </div>
 
 <form th:action="@{/adocao/solicitar/{id}(id=${animal.id})}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <label>Por que você quer adotar este animal?</label><br/>
     <textarea name="motivacao" rows="5" cols="50" required
               placeholder="Conte sobre você, sua casa, sua rotina..."></textarea>

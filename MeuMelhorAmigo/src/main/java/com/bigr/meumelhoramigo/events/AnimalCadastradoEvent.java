@@ -1,17 +1,18 @@
 package com.bigr.meumelhoramigo.events;
 
-// TODO: Rogerio precisa criar a classe Animal em com.bigr.meumelhoramigo.modelo
+import com.bigr.meumelhoramigo.modelo.Animal;
+import org.springframework.context.ApplicationEvent;
 
-// import com.bigr.meumelhoramigo.modelo.Animal;
+public class AnimalCadastradoEvent extends ApplicationEvent {
 
-public class AnimalCadastradoEvent {
-    // private final Animal animal;
+    private final Animal animal;
 
-    // public AnimalCadastradoEvent(Animal animal) {
-    //     this.animal = animal;
-    // }
+    public AnimalCadastradoEvent(Object source, Animal animal) {
+        super(source);
+        this.animal = animal;
+    }
 
-    // public Animal getAnimal() {
-    //     return animal;
-    // }
+    public Animal getAnimal() {
+        return animal;
+    }
 }

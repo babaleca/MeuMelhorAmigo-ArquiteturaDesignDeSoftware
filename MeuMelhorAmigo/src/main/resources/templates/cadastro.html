@@ -9,6 +9,7 @@
 <h2>Cadastro</h2>
 
 <form method="post" action="/cadastro">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <label>Nome:</label>
     <input type="text" name="nome" required/>
 

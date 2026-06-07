@@ -19,7 +19,9 @@ public class UsuarioService {
 
     public Usuario cadastrar(Usuario usuario) {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        usuario.setRole("ROLE_USER");
+        if (usuario.getRole() == null || usuario.getRole().isBlank()) {
+            usuario.setRole("ROLE_USER");
+        }
         return usuarioRepository.save(usuario);
     }
 

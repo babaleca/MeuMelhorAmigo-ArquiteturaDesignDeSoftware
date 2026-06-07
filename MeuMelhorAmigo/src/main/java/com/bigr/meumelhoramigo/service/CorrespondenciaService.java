@@ -1,6 +1,7 @@
 package com.bigr.meumelhoramigo.service;
 
 import com.bigr.meumelhoramigo.modelo.*;
+import com.bigr.meumelhoramigo.repository.AnimalRepository;
 import com.bigr.meumelhoramigo.repository.CorrespondenciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -14,6 +14,14 @@
     </style>
 </head>
 <body>
+<nav style="background:#2c6e49; padding:10px 24px; margin-bottom:20px;">
+    <a href="/animais" style="color:#fff; margin-right:16px; text-decoration:none;">Animais</a>
+    <a href="/animais/cadastrar" style="color:#fff; margin-right:16px; text-decoration:none;">+ Cadastrar Animal</a>
+    <a href="/notificacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Notificações</a>
+    <a href="/adocao/minhas-solicitacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Minhas Solicitações</a>
+    <a href="/admin/painel" style="color:#fff; margin-right:16px; text-decoration:none;">Admin</a>
+    <a href="/logout" style="color:#fff; float:right; text-decoration:none;">Sair</a>
+</nav>
 <a th:href="@{/animais}">&larr; Voltar para a lista</a>
 <h1>Detalhe do animal</h1>
 
@@ -31,14 +39,12 @@
     <tr><td class="label">Data de registro</td><td th:text="${#temporals.format(animal.dataRegistro, 'dd/MM/yyyy HH:mm')}"></td></tr>
     <tr><td class="label">Descrição</td><td th:text="${animal.descricao}"></td></tr>
 
-    <!-- Campos especificos de Animal Encontrado -->
     <th:block th:if="${animal instanceof T(com.bigr.meumelhoramigo.modelo.AnimalEncontrado)}">
         <tr><td class="label">Data do encontro</td><td th:text="${animal.dataEncontro}"></td></tr>
         <tr><td class="label">Local do encontro</td><td th:text="${animal.localEncontro}"></td></tr>
         <tr><td class="label">Condição de saúde</td><td th:text="${animal.condicaoSaude}"></td></tr>
     </th:block>
 
-    <!-- Campos especificos de Animal Perdido -->
     <th:block th:if="${animal instanceof T(com.bigr.meumelhoramigo.modelo.AnimalPerdido)}">
         <tr><td class="label">Nome</td><td th:text="${animal.nome}"></td></tr>
         <tr><td class="label">Data do desaparecimento</td><td th:text="${animal.dataDesaparecimento}"></td></tr>
@@ -50,5 +56,11 @@
         <td class="label">Responsável</td><td th:text="${animal.responsavel.nome}"></td>
     </tr>
 </table>
+
+<br/>
+<a th:href="@{/adocao/solicitar/{id}(id=${animal.id})}"
+   style="display:inline-block; padding:10px 18px; background:#2c6e49; color:#fff; text-decoration:none; border-radius:6px; margin-top:16px;">
+    🐾 Solicitar Adoção
+</a>
 </body>
 </html>

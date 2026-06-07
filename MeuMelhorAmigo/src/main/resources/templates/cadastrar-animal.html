@@ -14,10 +14,19 @@
     </style>
 </head>
 <body>
+<nav style="background:#2c6e49; padding:10px 24px; margin-bottom:20px;">
+    <a href="/animais" style="color:#fff; margin-right:16px; text-decoration:none;">Animais</a>
+    <a href="/animais/cadastrar" style="color:#fff; margin-right:16px; text-decoration:none;">+ Cadastrar Animal</a>
+    <a href="/notificacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Notificações</a>
+    <a href="/adocao/minhas-solicitacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Minhas Solicitações</a>
+    <a href="/admin/painel" style="color:#fff; margin-right:16px; text-decoration:none;">⚙Admin</a>
+    <a href="/logout" style="color:#fff; float:right; text-decoration:none;">Sair</a>
+</nav>
 <a th:href="@{/animais}">&larr; Voltar para a lista</a>
 <h1>Cadastrar animal</h1>
 
 <form method="post" th:action="@{/animais/cadastrar}" enctype="multipart/form-data">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
     <label>Tipo de cadastro</label>
     <select name="tipo" id="tipo" onchange="alternar()">
