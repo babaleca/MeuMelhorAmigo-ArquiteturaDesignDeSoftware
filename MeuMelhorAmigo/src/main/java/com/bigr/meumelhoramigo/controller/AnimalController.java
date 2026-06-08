@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class AnimalController {
@@ -33,19 +34,20 @@ public class AnimalController {
     @Autowired
     private UsuarioService usuarioService;
 
-    /** Listagem publica com filtros opcionais (RF6). */
+    /** Listagem publica. Filtros (busca, status, especie) sao client-side. */
     @GetMapping("/animais")
-    public String listar(@RequestParam(required = false) String especie,
-                         @RequestParam(required = false) String status,
-                         Model model) {
-        StatusAnimal statusEnum = null;
-        if (status != null && !status.isBlank()) {
-            statusEnum = StatusAnimal.valueOf(status);
-        }
-        model.addAttribute("animais", animalService.buscarPorFiltro(especie, statusEnum));
-        model.addAttribute("especie", especie);
-        model.addAttribute("status", statusEnum);
-        model.addAttribute("statusValores", StatusAnimal.values());
+    public String listar(Model model) {
+        List<Animal> animais = animalService.listarTodos();
+        model.addAttribute("animais", animais);
+        model.addAttribute("total", animais.size());
+        model.addAttribute("countDisp",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.DISPONIVEL).count());
+        model.addAttribute("countPerd",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.PERDIDO).count());
+        model.addAttribute("countEnc",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.ENCONTRADO).count());
+        model.addAttribute("countAdot",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.ADOTADO).count());
         return "animais-lista";
     }
 

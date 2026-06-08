@@ -1,11 +1,7 @@
 package com.bigr.meumelhoramigo;
 
-import com.bigr.meumelhoramigo.modelo.Usuario;
-import com.bigr.meumelhoramigo.service.UsuarioService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class MeumelhoramigoApplication {
@@ -13,16 +9,9 @@ public class MeumelhoramigoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MeumelhoramigoApplication.class, args);
 	}
-	@Bean
-	public CommandLineRunner initAdmin(UsuarioService usuarioService) {
-		return args -> {
-			Usuario admin = new Usuario();
-			admin.setNome("Administrador");
-			admin.setEmail("admin@meumelhoramigo.com");
-			admin.setSenha("admin123");
-			admin.setRole("ROLE_ADMIN");
-			usuarioService.cadastrar(admin);
-		};
-	}
+
+	// O seeding do admin é feito por DataInitializer.seedAdmin (que verifica
+	// se o usuário já existe antes de inserir). Não duplicar aqui, senão
+	// ocorre violação da constraint unique do e-mail.
 
 }

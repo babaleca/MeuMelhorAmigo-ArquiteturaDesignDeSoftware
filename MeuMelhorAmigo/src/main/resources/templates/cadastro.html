@@ -1,27 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Cadastro - MeuMelhorAmigo</title>
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro')}"></head>
 <body>
-<h1>MeuMelhorAmigo</h1>
-<h2>Cadastro</h2>
+<div class="auth-wrap">
+    <div class="container" style="max-width:960px">
+        <div class="card auth-card">
 
-<form method="post" action="/cadastro">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    <label>Nome:</label>
-    <input type="text" name="nome" required/>
+            <!-- formulário -->
+            <div class="auth-form">
+                <div class="eyebrow" style="margin-bottom:10px">Criar conta</div>
+                <h1 style="font-size:28px;font-weight:800;margin-bottom:6px">Cadastro de usuário</h1>
+                <p class="muted" style="margin:0 0 24px;font-size:15px">É rápido e gratuito.</p>
 
-    <label>Email:</label>
-    <input type="email" name="email" required/>
+                <div th:if="${erro}" class="err-msg"><span>⚠️</span><span th:text="${erro}">Erro</span></div>
 
-    <label>Senha:</label>
-    <input type="password" name="senha" required/>
+                <form method="post" th:action="@{/cadastro}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="field">
+                        <label>Nome completo</label>
+                        <input class="inp" name="nome" placeholder="Seu nome" th:value="${nome}" required/>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input class="inp" type="email" name="email" placeholder="voce@email.com" th:value="${email}" required/>
+                    </div>
+                    <div class="field">
+                        <label>Senha</label>
+                        <input class="inp" type="password" name="senha" placeholder="••••••••" required/>
+                        <span class="hint">Mínimo de 6 caracteres.</span>
+                    </div>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit" style="margin-top:6px">Criar conta</button>
+                </form>
 
-    <button type="submit">Cadastrar</button>
-</form>
+                <p style="text-align:center;font-size:14.5px;color:var(--ink-2);font-weight:600;margin-top:20px">
+                    Já tem conta? <a th:href="@{/login}" class="link-brand">Entrar</a>
+                </p>
+            </div>
 
-<a href="/login">Já tem conta? Faça login</a>
+            <!-- painel ilustrativo -->
+            <div class="auth-side">
+                <img th:src="@{/images/logon.png}" alt="MeuMelhorAmigo" style="width:132px;height:132px;object-fit:contain;align-self:flex-start"/>
+                <div>
+                    <h2>Junte-se a quem<br/>cuida.</h2>
+                    <p class="lead">Crie sua conta gratuita para publicar animais perdidos, encontrados e acompanhar adoções.</p>
+                </div>
+                <ul class="auth-bul">
+                    <li><span>✓</span> Publique em menos de 1 minuto</li>
+                    <li><span>✓</span> Receba alertas de correspondência</li>
+                    <li><span>✓</span> Converse com tutores e abrigos</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

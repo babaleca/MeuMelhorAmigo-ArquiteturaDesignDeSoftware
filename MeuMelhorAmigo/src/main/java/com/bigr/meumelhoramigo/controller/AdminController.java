@@ -1,5 +1,7 @@
 package com.bigr.meumelhoramigo.controller;
 
+import com.bigr.meumelhoramigo.modelo.Animal;
+import com.bigr.meumelhoramigo.modelo.StatusAnimal;
 import com.bigr.meumelhoramigo.repository.AnimalRepository;
 import com.bigr.meumelhoramigo.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -20,8 +24,16 @@ public class AdminController {
 
     @GetMapping("/painel")
     public String painel(Model model) {
-        model.addAttribute("animais", animalRepository.findAll());
+        List<Animal> animais = animalRepository.findAll();
+        model.addAttribute("animais", animais);
         model.addAttribute("usuarios", usuarioRepository.findAll());
+        model.addAttribute("totalAnimais", animais.size());
+        model.addAttribute("totalDisp",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.DISPONIVEL).count());
+        model.addAttribute("totalPerdEnc",
+                animais.stream().filter(a -> a.getStatus() == StatusAnimal.PERDIDO
+                        || a.getStatus() == StatusAnimal.ENCONTRADO).count());
+        model.addAttribute("totalUsuarios", usuarioRepository.count());
         return "admin-painel";
     }
 

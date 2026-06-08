@@ -1,76 +1,140 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Minhas Solicitações - MeuMelhorAmigo</title>
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Solicitações de adoção')}"></head>
 <body>
-<nav style="background:#2c6e49; padding:10px 24px; margin-bottom:20px;">
-    <a href="/animais" style="color:#fff; margin-right:16px; text-decoration:none;">Animais</a>
-    <a href="/animais/cadastrar" style="color:#fff; margin-right:16px; text-decoration:none;">+ Cadastrar Animal</a>
-    <a href="/notificacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Notificações</a>
-    <a href="/adocao/minhas-solicitacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Minhas Solicitações</a>
-    <a href="/admin/painel" style="color:#fff; margin-right:16px; text-decoration:none;">Admin</a>
-    <a href="/logout" style="color:#fff; float:right; text-decoration:none;">Sair</a>
-</nav>
-<h1>MeuMelhorAmigo</h1>
+<header th:replace="~{fragments/layout :: nav('adocoes')}"></header>
 
-<div th:if="${sucesso}" style="color: green;">
-    <p th:text="${sucesso}"></p>
-</div>
+<main class="container page page-mid">
+    <div class="page-head">
+        <div>
+            <div class="eyebrow">Adoções</div>
+            <h1>Solicitações de adoção</h1>
+            <p class="sub">Gerencie os pedidos recebidos para seus animais e acompanhe os que você enviou.</p>
+        </div>
+    </div>
 
-<h2>Solicitações recebidas nos meus animais</h2>
-<div th:if="${#lists.isEmpty(recebidas)}">
-    <p>Nenhuma solicitação recebida ainda.</p>
-</div>
-<table th:unless="${#lists.isEmpty(recebidas)}" border="1">
-    <tr>
-        <th>Animal</th>
-        <th>Adotante</th>
-        <th>Motivação</th>
-        <th>Data</th>
-        <th>Status</th>
-        <th>Ações</th>
-    </tr>
-    <tr th:each="s : ${recebidas}">
-        <td th:text="${s.animal.especie + ' - ' + s.animal.raca}"></td>
-        <td th:text="${s.adotante.nome}"></td>
-        <td th:text="${s.motivacao}"></td>
-        <td th:text="${s.dataSolicitacao}"></td>
-        <td th:text="${s.status}"></td>
-        <td>
-            <form th:if="${s.status.name() == 'PENDENTE'}"
-                  th:action="@{/adocao/aprovar/{id}(id=${s.id})}" method="post" style="display:inline">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit">Aprovar</button>
-            </form>
-            <form th:if="${s.status.name() == 'PENDENTE'}"
-                  th:action="@{/adocao/recusar/{id}(id=${s.id})}" method="post" style="display:inline">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit">Recusar</button>
-            </form>
-        </td>
-    </tr>
-</table>
+    <div th:if="${sucesso}" class="ok-msg"><span>✓</span><span th:text="${sucesso}">ok</span></div>
+    <div th:if="${erro}" class="err-msg"><span>⚠️</span><span th:text="${erro}">erro</span></div>
 
-<h2>Minhas candidaturas</h2>
-<div th:if="${#lists.isEmpty(enviadas)}">
-    <p>Você ainda não se candidatou a nenhum animal.</p>
-</div>
-<table th:unless="${#lists.isEmpty(enviadas)}" border="1">
-    <tr>
-        <th>Animal</th>
-        <th>Data</th>
-        <th>Status</th>
-    </tr>
-    <tr th:each="s : ${enviadas}">
-        <td th:text="${s.animal.especie + ' - ' + s.animal.raca}"></td>
-        <td th:text="${s.dataSolicitacao}"></td>
-        <td th:text="${s.status}"></td>
-    </tr>
-</table>
+    <div class="tabs" style="margin-bottom:22px">
+        <button class="tab on" id="tab-recebidas" type="button">Recebidas
+            <span class="badge-soft" style="padding:1px 7px;margin-left:4px" th:if="${!recebidas.isEmpty()}" th:text="${recebidas.size()}">0</span>
+        </button>
+        <button class="tab" id="tab-enviadas" type="button">Enviadas
+            <span class="badge-soft" style="padding:1px 7px;margin-left:4px" th:if="${!enviadas.isEmpty()}" th:text="${enviadas.size()}">0</span>
+        </button>
+    </div>
 
-<br/>
-<a href="/animais">← Voltar para animais</a>
+    <!-- RECEBIDAS -->
+    <div id="painel-recebidas">
+        <div th:if="${recebidas.isEmpty()}" class="empty card card-pad">
+            <div class="big">📥</div>
+            <h3>Nenhuma solicitação recebida</h3>
+            <p>Quando alguém quiser adotar um animal sob sua responsabilidade, aparecerá aqui.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px" th:unless="${recebidas.isEmpty()}">
+            <div th:each="r : ${recebidas}" class="card" style="padding:18px;display:flex;gap:16px">
+                <div class="photo" style="width:84px;height:84px;border-radius:13px;flex:none"
+                     th:style="|--ph-a:${#view.speciesPhA(r.animal.especie)};--ph-b:${#view.speciesPhB(r.animal.especie)};width:84px;height:84px;border-radius:13px;flex:none|">
+                    <img th:if="${r.animal.foto != null}" th:src="@{${r.animal.foto}}" alt="foto"/>
+                    <span th:unless="${r.animal.foto != null}" class="glyph" style="font-size:34px" th:text="${#view.speciesGlyph(r.animal.especie)}">🐾</span>
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">
+                        <a th:href="@{|/animais/${r.animal.id}|}" style="text-decoration:none">
+                            <h3 style="font-size:18px" th:text="${#view.nome(r.animal)}">Animal</h3>
+                        </a>
+                        <span class="badge" th:classappend="${#view.adocaoClass(r.status)}">
+                            <span class="bdot"></span><span th:text="${#view.adocaoLabel(r.status)}">Status</span>
+                        </span>
+                    </div>
+                    <div class="meta" style="margin-bottom:8px">
+                        <span th:text="${#view.speciesLabel(r.animal.especie)}">Cão</span><span class="sep"></span>
+                        <span th:text="${r.animal.raca}">Raça</span><span class="sep"></span>
+                        <span th:text="${#view.fmtDateTime(r.dataSolicitacao)}">data</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <span class="avatar" style="width:26px;height:26px;font-size:11px"
+                              th:style="|background:${#view.avatarColor(r.adotante.nome)};width:26px;height:26px;font-size:11px|"
+                              th:text="${#view.initials(r.adotante.nome)}">AB</span>
+                        <span style="font-size:13.5px;font-weight:700" th:text="${r.adotante.nome}">Solicitante</span>
+                        <span class="muted" style="font-size:13.5px">quer adotar</span>
+                    </div>
+                    <p class="muted" style="font-size:14px;margin:0 0 12px;font-style:italic" th:text="'“' + ${r.motivacao} + '”'">motivação</p>
+
+                    <div style="display:flex;gap:10px" th:if="${r.status.name() == 'PENDENTE'}">
+                        <form method="post" th:action="@{|/adocao/aprovar/${r.id}|}" style="margin:0">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button class="btn btn-leaf btn-sm" type="submit">✓ Aprovar</button>
+                        </form>
+                        <form method="post" th:action="@{|/adocao/recusar/${r.id}|}" style="margin:0">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button class="btn btn-danger btn-sm" type="submit">✕ Recusar</button>
+                        </form>
+                    </div>
+                    <div th:if="${r.status.name() == 'APROVADO'}" style="font-size:13.5px;font-weight:800;color:var(--st-disp)">🎉 Adoção aprovada!</div>
+                    <div th:if="${r.status.name() == 'RECUSADO'}" style="font-size:13.5px;font-weight:700;color:var(--st-perd)">Solicitação recusada.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENVIADAS -->
+    <div id="painel-enviadas" style="display:none">
+        <div th:if="${enviadas.isEmpty()}" class="empty card card-pad">
+            <div class="big">📤</div>
+            <h3>Nenhuma solicitação enviada</h3>
+            <p>Os pedidos de adoção que você enviar aparecerão aqui.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px" th:unless="${enviadas.isEmpty()}">
+            <div th:each="r : ${enviadas}" class="card" style="padding:18px;display:flex;gap:16px">
+                <div class="photo" style="width:84px;height:84px;border-radius:13px;flex:none"
+                     th:style="|--ph-a:${#view.speciesPhA(r.animal.especie)};--ph-b:${#view.speciesPhB(r.animal.especie)};width:84px;height:84px;border-radius:13px;flex:none|">
+                    <img th:if="${r.animal.foto != null}" th:src="@{${r.animal.foto}}" alt="foto"/>
+                    <span th:unless="${r.animal.foto != null}" class="glyph" style="font-size:34px" th:text="${#view.speciesGlyph(r.animal.especie)}">🐾</span>
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">
+                        <a th:href="@{|/animais/${r.animal.id}|}" style="text-decoration:none">
+                            <h3 style="font-size:18px" th:text="${#view.nome(r.animal)}">Animal</h3>
+                        </a>
+                        <span class="badge" th:classappend="${#view.adocaoClass(r.status)}">
+                            <span class="bdot"></span><span th:text="${#view.adocaoLabel(r.status)}">Status</span>
+                        </span>
+                    </div>
+                    <div class="meta" style="margin-bottom:8px">
+                        <span th:text="${#view.speciesLabel(r.animal.especie)}">Cão</span><span class="sep"></span>
+                        <span th:text="${r.animal.raca}">Raça</span><span class="sep"></span>
+                        <span th:text="${#view.fmtDateTime(r.dataSolicitacao)}">data</span>
+                    </div>
+                    <p class="muted" style="font-size:14px;margin:0 0 12px;font-style:italic" th:text="'“' + ${r.motivacao} + '”'">motivação</p>
+                    <div th:if="${r.status.name() == 'PENDENTE'}" class="muted" style="font-size:13px;font-weight:700">⏳ Aguardando resposta do responsável…</div>
+                    <div th:if="${r.status.name() == 'APROVADO'}" style="font-size:13.5px;font-weight:800;color:var(--st-disp)">🎉 Adoção aprovada!</div>
+                    <div th:if="${r.status.name() == 'RECUSADO'}" style="font-size:13.5px;font-weight:700;color:var(--st-perd)">Solicitação recusada.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+
+<script th:inline="none">
+    (function () {
+        const tR = document.getElementById('tab-recebidas');
+        const tE = document.getElementById('tab-enviadas');
+        const pR = document.getElementById('painel-recebidas');
+        const pE = document.getElementById('painel-enviadas');
+        function show(tab) {
+            const rec = tab === 'recebidas';
+            tR.classList.toggle('on', rec);
+            tE.classList.toggle('on', !rec);
+            pR.style.display = rec ? '' : 'none';
+            pE.style.display = rec ? 'none' : '';
+        }
+        tR.addEventListener('click', function () { show('recebidas'); });
+        tE.addEventListener('click', function () { show('enviadas'); });
+    })();
+</script>
 </body>
 </html>

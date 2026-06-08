@@ -1,0 +1,11 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MeuMelhorAmigo">
+  <path d="M32 6C23 6 16 13 16 22c0 10.5 12.5 23 15 25.4a1.4 1.4 0 0 0 2 0C35.5 45 48 32.5 48 22 48 13 41 6 32 6z"
+        fill="none" stroke="#eef5f1" stroke-width="3.6"/>
+  <g fill="#eef5f1">
+    <circle cx="26" cy="19.5" r="2.4"/>
+    <circle cx="38" cy="19.5" r="2.4"/>
+    <circle cx="21.4" cy="25" r="2.2"/>
+    <circle cx="42.6" cy="25" r="2.2"/>
+    <path d="M32 24c3.3 0 6 2.5 6 5.5 0 2.7-2.6 4.4-6 4.4s-6-1.7-6-4.4c0-3 2.7-5.5 6-5.5z"/>
+  </g>
+</svg>
