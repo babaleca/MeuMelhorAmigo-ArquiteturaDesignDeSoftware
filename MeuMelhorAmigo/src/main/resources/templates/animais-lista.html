@@ -1,59 +1,137 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Animais - MeuMelhorAmigo</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; color: #222; }
-        h1 { color: #2c6e49; }
-        .filtros { margin: 16px 0; padding: 12px; background: #f4f4f4; border-radius: 8px; }
-        .filtros input, .filtros select { padding: 6px; margin-right: 8px; }
-        .grid { display: flex; flex-wrap: wrap; gap: 16px; }
-        .card { border: 1px solid #ddd; border-radius: 8px; width: 220px; overflow: hidden; }
-        .card img { width: 100%; height: 150px; object-fit: cover; background: #eee; }
-        .card .body { padding: 10px; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; color: #fff; background: #2c6e49; }
-        a.btn { display: inline-block; padding: 8px 14px; background: #2c6e49; color: #fff; text-decoration: none; border-radius: 6px; }
-    </style>
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Animais')}"></head>
 <body>
-<body>
-<nav style="background:#2c6e49; padding:10px 24px; margin-bottom:20px;">
-    <a href="/animais" style="color:#fff; margin-right:16px; text-decoration:none;">Animais</a>
-    <a href="/animais/cadastrar" style="color:#fff; margin-right:16px; text-decoration:none;">+ Cadastrar Animal</a>
-    <a href="/notificacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Notificações</a>
-    <a href="/adocao/minhas-solicitacoes" style="color:#fff; margin-right:16px; text-decoration:none;">Minhas Solicitações</a>
-    <a href="/admin/painel" style="color:#fff; margin-right:16px; text-decoration:none;">Admin</a>
-    <a href="/logout" style="color:#fff; float:right; text-decoration:none;">Sair</a>
-</nav>
-<h1>Animais cadastrados</h1>
-<a class="btn" th:href="@{/animais/cadastrar}">+ Cadastrar animal</a>
+<header th:replace="~{fragments/layout :: nav('animais')}"></header>
 
-<form class="filtros" method="get" th:action="@{/animais}">
-    <input type="text" name="especie" placeholder="Espécie (cão, gato...)" th:value="${especie}"/>
-    <select name="status">
-        <option value="">Todos os status</option>
-        <option th:each="s : ${statusValores}" th:value="${s}" th:text="${s}"
-                th:selected="${s == status}"></option>
-    </select>
-    <button type="submit">Filtrar</button>
-</form>
+<main class="container page">
 
-<div class="grid">
-    <div class="card" th:each="a : ${animais}">
-        <a th:href="@{'/animais/' + ${a.id}}">
-            <img th:if="${a.foto != null}" th:src="@{${a.foto}}" alt="foto"/>
-            <img th:unless="${a.foto != null}" src="https://placehold.co/220x150?text=Sem+foto" alt="sem foto"/>
-        </a>
-        <div class="body">
-            <span class="badge" th:text="${a.status}"></span>
-            <p><strong th:text="${a.especie}"></strong>
-                <span th:if="${a.raca != null}" th:text="' - ' + ${a.raca}"></span></p>
-            <p th:if="${a.local != null}" th:text="'Local: ' + ${a.local}"></p>
-            <a th:href="@{'/animais/' + ${a.id}}">Ver detalhes</a>
+    <div class="page-head">
+        <div>
+            <div class="eyebrow">Mural de animais</div>
+            <h1>Encontre, ajude, adote</h1>
+            <p class="sub">Todos os animais perdidos, encontrados e disponíveis para adoção em um só lugar.</p>
+        </div>
+        <a sec:authorize="isAuthenticated()" th:href="@{/animais/cadastrar}" class="btn btn-primary">＋ Cadastrar animal</a>
+    </div>
+
+    <!-- busca -->
+    <div style="position:relative;margin-bottom:18px;max-width:440px">
+        <span style="position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.5">🔍</span>
+        <input id="busca" class="inp" style="padding-left:42px" placeholder="Buscar por nome, raça, cor ou local…"/>
+    </div>
+
+    <!-- filtros -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px">
+        <div class="chips" id="chips-status">
+            <button class="chip on" data-status="todos">Todos <span class="cnt" th:text="${total}">0</span></button>
+            <button class="chip disp" data-status="DISPONIVEL">Disponível <span class="cnt" th:text="${countDisp}">0</span></button>
+            <button class="chip perd" data-status="PERDIDO">Perdido <span class="cnt" th:text="${countPerd}">0</span></button>
+            <button class="chip enc" data-status="ENCONTRADO">Encontrado <span class="cnt" th:text="${countEnc}">0</span></button>
+            <button class="chip adot" data-status="ADOTADO">Adotado <span class="cnt" th:text="${countAdot}">0</span></button>
+        </div>
+        <div class="chips" id="chips-especie">
+            <button class="chip on" data-especie="todos">Todas espécies</button>
+            <button class="chip" data-especie="cao">🐶 Cão</button>
+            <button class="chip" data-especie="gato">🐱 Gato</button>
+            <button class="chip" data-especie="passaro">🐦 Pássaro</button>
+            <button class="chip" data-especie="coelho">🐰 Coelho</button>
+            <button class="chip" data-especie="outro">🐾 Outro</button>
         </div>
     </div>
-    <p th:if="${#lists.isEmpty(animais)}">Nenhum animal encontrado.</p>
-</div>
+
+    <!-- vazio (nenhum animal cadastrado) -->
+    <div th:if="${animais.isEmpty()}" class="empty card card-pad">
+        <div class="big">🐾</div>
+        <h3>Nenhum animal cadastrado ainda</h3>
+        <p>Seja o primeiro a publicar um animal.</p>
+    </div>
+
+    <!-- grid -->
+    <div class="grid" id="grid" th:unless="${animais.isEmpty()}">
+        <a th:each="a : ${animais}" class="card acard" th:href="@{|/animais/${a.id}|}"
+           th:data-status="${a.status}"
+           th:data-especie="${#view.speciesId(a.especie)}"
+           th:data-search="${#view.searchKey(a)}">
+            <div class="photo" th:style="|--ph-a:${#view.speciesPhA(a.especie)};--ph-b:${#view.speciesPhB(a.especie)}|">
+                <img th:if="${a.foto != null}" th:src="@{${a.foto}}" alt="foto"/>
+                <span th:unless="${a.foto != null}" class="glyph" th:text="${#view.speciesGlyph(a.especie)}">🐾</span>
+                <span class="ph-tag" th:text="'foto · ' + ${#strings.toLowerCase(#view.speciesLabel(a.especie))}">foto</span>
+            </div>
+            <div class="acard-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <h3 th:text="${#view.nome(a)}">Nome</h3>
+                    <span th:classappend="${#view.statusClass(a.status)}" class="badge">
+                        <span class="bdot"></span><span th:text="${#view.statusLabel(a.status)}">Status</span>
+                    </span>
+                </div>
+                <div class="meta">
+                    <span th:text="${#view.speciesLabel(a.especie)}">Cão</span>
+                    <span class="sep"></span>
+                    <span th:text="${a.raca}">Raça</span>
+                </div>
+                <div class="meta"><span th:text="'📍 ' + ${a.local}">Local</span></div>
+                <div style="flex:1"></div>
+                <div class="meta" style="margin-top:4px;font-size:12.5px">
+                    <span th:text="${a.sexo}">Sexo</span><span class="sep"></span>
+                    <span th:text="${a.tamanho}">Tamanho</span><span class="sep"></span>
+                    <span th:text="${#view.fmtDateTime(a.dataRegistro)}">Data</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- vazio (filtro sem resultados) -->
+    <div id="empty" class="empty card card-pad" style="display:none">
+        <div class="big">🐾</div>
+        <h3>Nenhum animal encontrado</h3>
+        <p>Tente ajustar os filtros ou a busca.</p>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+
+<script th:inline="none">
+    (function () {
+        const state = { status: 'todos', especie: 'todos', q: '' };
+        const cards = Array.prototype.slice.call(document.querySelectorAll('#grid .acard'));
+        const empty = document.getElementById('empty');
+
+        function apply() {
+            let visible = 0;
+            cards.forEach(function (c) {
+                const okS = state.status === 'todos' || c.dataset.status === state.status;
+                const okE = state.especie === 'todos' || c.dataset.especie === state.especie;
+                const okQ = state.q === '' || (c.dataset.search || '').indexOf(state.q) !== -1;
+                const show = okS && okE && okQ;
+                c.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            if (empty) empty.style.display = (visible === 0 && cards.length > 0) ? '' : 'none';
+        }
+
+        const busca = document.getElementById('busca');
+        if (busca) busca.addEventListener('input', function (e) { state.q = e.target.value.toLowerCase(); apply(); });
+
+        document.querySelectorAll('#chips-status .chip').forEach(function (ch) {
+            ch.addEventListener('click', function () {
+                document.querySelectorAll('#chips-status .chip').forEach(function (x) { x.classList.remove('on'); });
+                ch.classList.add('on');
+                state.status = ch.dataset.status;
+                apply();
+            });
+        });
+        document.querySelectorAll('#chips-especie .chip').forEach(function (ch) {
+            ch.addEventListener('click', function () {
+                document.querySelectorAll('#chips-especie .chip').forEach(function (x) { x.classList.remove('on'); });
+                ch.classList.add('on');
+                state.especie = ch.dataset.especie;
+                apply();
+            });
+        });
+    })();
+</script>
 </body>
 </html>
